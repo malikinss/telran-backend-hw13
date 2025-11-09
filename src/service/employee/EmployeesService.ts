@@ -68,4 +68,13 @@ export default interface EmployeesService {
 	 * @throws {Error} - Throws an error if the employee with the given ID does not exist.
 	 */
 	deleteEmployee(id: string): Promise<Employee>;
+
+	/**
+	 * Saves the current state of employees to the data source.
+	 * @returns {Promise<void>} - Promise that resolves when the save operation is complete.
+	 * @throws {Error} - Throws an error if the save operation fails.
+	 * @example
+	 * await service.save();
+	 */
+	save(): Promise<void>;
 }
