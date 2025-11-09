@@ -12,7 +12,7 @@ const registry = new Map<string, Factory>();
  * @param factory Factory function to create the employee service
  * @throws Error if the key is already registered
  */
-export function registerEmployeeService(key: string, factory: Factory): void {
+export function registerEmployeesService(key: string, factory: Factory): void {
 	if (registry.has(key)) {
 		throw new Error(`Factory with key ${key} is already registered.`);
 	}
@@ -26,7 +26,7 @@ export function registerEmployeeService(key: string, factory: Factory): void {
  * @returns Promise resolving to the created employee service instance
  * @throws Error if no factory is registered with the given key
  */
-export function createEmployeeService(
+export function createEmployeesService(
 	key: string,
 	deps: any = {}
 ): Promise<EmployeeService> {
