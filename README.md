@@ -1,182 +1,180 @@
-# Homework 12: Service Unit-Test
+# Homework 13: SQL Service Implementation with `AbstractEmployeesServiceSql`
 
 ## 🧩 Task Definition
 
-Complete all **service-level unit tests** for the `EmployeesService`.
-Update `EmployeesService.test.ts` so that each service method (except `save`) is covered.
+HW#13 focuses on implementing the abstract SQL-based employee service.  
+The main goals are:
 
-**Your task includes:**
+-   Complete all methods of the `AbstractEmployeesServiceSql` class (currently throw `"Not Implemented"`).
+-   Implement full CRUD logic using **Knex** and **SQLite**.
+-   Ensure all service tests pass successfully.
 
--   ✅ Write tests for `getAll`, `getEmployee`, `addEmployee`, `updateEmployee`, and `deleteEmployee`.
--   ✅ Use `beforeEach(resetTestEmployees)` to reset the service state before every test.
--   ✅ Test for all expected success and error cases (`NotFoundError`, `AlreadyExistsError`).
--   ✅ Ensure all tests pass.
-
-**Run tests**
+### 🧪 Running Tests
 
 ```bash
-npm run test-service map
+npm run test-service sqlite
 ```
 
-All tests must pass ✅
+✅ All tests must pass.
 
 ---
 
 ## 📝 Description
 
-This homework implements **unit tests for the EmployeesService module**, responsible for CRUD operations on employee data.
-The service is tested independently from the Express API and focuses solely on business logic and data handling.
+This homework introduces a **database-powered employee service layer**.
+You will implement all SQL operations inside the abstract base class `AbstractEmployeesServiceSql`, which acts as a foundation for future database services.
 
-Each test verifies:
-
--   Proper data retrieval and filtering.
--   Correct employee addition, updates, and deletions.
--   Proper error throwing for non-existing or duplicate employees.
--   Stable state before each test run.
+Using **Knex.js** as a query builder and **SQLite** as the database engine, the service supports full CRUD operations for managing employees with persistent storage.
 
 ---
 
 ## 🎯 Purpose
 
-The goal is to practice **isolated unit testing of service logic**, ensuring that business rules work as expected without involving routes or controllers.
-
-By the end you should:
-
--   Understand how to structure service tests in TypeScript.
--   Use `node:test` and `assert/strict` for validation.
--   Apply test data reset to maintain consistent test environments.
--   Detect logical or state management errors early.
+-   Learn how to extend abstract classes and implement all required methods.
+-   Practice SQL query writing using **Knex**.
+-   Understand how to integrate database operations into the service layer.
+-   Ensure your service passes all automated unit tests for correctness.
 
 ---
 
 ## ✨ Features
 
--   🧩 Unit tests for all EmployeesService methods.
--   🧱 Independent of Express controllers or routes.
--   ⚙️ Pre-defined test data set (`stateEmployees`) for repeatable scenarios.
--   🔁 `beforeEach` environment reset with `resetTestEmployees()`.
--   🚨 Error handling tests for `AlreadyExistsError` and `NotFoundError`.
--   🧠 Written in TypeScript using modern Node.js test API.
+-   🧱 Abstract class pattern with concrete SQLite implementation
+-   💾 Persistent storage using **SQLite**
+-   ⚙️ CRUD operations for employee management:
+
+    -   Get all employees or filter by department
+    -   Retrieve a specific employee by ID
+    -   Add a new employee record
+    -   Update employee details
+    -   Delete employee by ID
+
+-   🧩 Integration with service registry via `EmployeesServiceMap.ts`
+-   🧪 Comprehensive test coverage for all service methods
+
+---
+
+## 🏗️ Architecture Overview
+
+```
+Registry → EmployeesServiceSqlite → AbstractEmployeesServiceSql → SQLite (via Knex)
+```
+
+This layered design separates abstraction from implementation, ensuring scalability and easy migration to other databases (e.g., PostgreSQL, MySQL).
 
 ---
 
 ## 🔍 How It Works
 
-1. **Service Initialization**
-   `EmployeesServiceMap` loads a predefined in-memory collection of employees.
+1. The `AbstractEmployeesServiceSql` class defines method signatures for all SQL operations.
+2. The subclass `EmployeesServiceSqlite` provides real implementations using Knex.
+3. All data operations interact directly with the SQLite database.
+4. Unit tests verify CRUD behavior and database consistency.
 
-2. **Test Environment Setup**
-   The `resetTestEmployees()` utility clears the current employees and re-adds a fresh copy of `stateEmployees` before each test block.
+**Implemented methods:**
 
-3. **Grouped Test Cases**
-
-    - `employeesGetTestCases` → tests for retrieving data.
-    - `employeesAddTestCases` → tests for adding employees.
-    - `employeesUpdateTestCases` → tests for updates.
-    - `employeesDeleteTestCases` → tests for deletion.
-
-4. **Assertions**
-
-    - Uses `assert.rejects()` for error cases.
-    - Uses `assert.deepEqual()` and `assert.ok()` for data comparison.
-    - Validates object equality and state consistency.
+-   `getAll()` → Returns all employees or filters by department
+-   `getById(id)` → Finds an employee by ID
+-   `addEmployee(employee)` → Inserts a new employee record
+-   `updateEmployee(id, data)` → Updates an employee’s fields
+-   `deleteEmployee(id)` → Deletes an employee by ID
 
 ---
 
 ## 📜 Output Example
 
-**✅ All tests pass**
+**Example: Fetching All Employees**
 
+```ts
+const employees = await employeesService.getAll();
+console.log(employees);
 ```
-✔ Add existing employee -> throwing AlreadyExistsError
-✔ Add new employee object with no id -> returns added object with id
-✔ Delete non existing employee -> throws NotFoundError
-✔ Delete existing employee
-✔ Get non existing employee by ID -> throws NotFoundError
-✔ Get all employee objects -> returns all state employees
-✔ Get all employees by department -> filters correctly
-✔ Get existing employee -> returns employee
-✔ Update non existing employee -> throws NotFoundError
-✔ Update existing employee -> returns employee with updated salary value
+
+**Output:**
+
+```json
+[
+	{
+		"id": "f1a2b3c4-5678-90ab-cdef-1234567890ab",
+		"fullName": "Alice Johnson",
+		"avatar": "https://example.com/avatar.jpg",
+		"department": "Development",
+		"birthDate": "1995-05-20",
+		"salary": 12000
+	},
+	{
+		"id": "b2c3d4e5-6789-01ab-cdef-234567890abc",
+		"fullName": "Bob Smith",
+		"avatar": "https://example.com/avatar2.jpg",
+		"department": "QA",
+		"birthDate": "1990-03-15",
+		"salary": 10000
+	}
+]
 ```
 
 ---
 
 ## 📦 Usage
 
-1️⃣ Install dependencies
+1. Clone the repository:
+
+```bash
+git clone https://github.com/malikinss/telran-backend-hw13.git
+cd telran-backend-hw13
+```
+
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-2️⃣ Run the service unit tests
+3. Set up environment variables (if needed):
 
-```bash
-npm run test-service map
+```env
+DB_PATH=./data/employees.db
 ```
 
-3️⃣ Inspect results
-All tests should display a ✅ status and no failures.
+4. Run the SQLite service tests:
+
+```bash
+npm run test-service sqlite
+```
+
+All tests must pass to confirm correct implementation.
 
 ---
 
 ## 🚀 Usage Examples (HTTP)
 
-_(Optional — for context with controller integration)_
+While this homework focuses on the **service layer**, it powers the following REST endpoints:
 
-```bash
-# Fetch all employees
-curl -X GET http://localhost:3000/employees
-
-# Add new employee
-curl -X POST http://localhost:3000/employees \
--H "Content-Type: application/json" \
--d '{"fullName":"John Doe","department":"QA","salary":10000,"birthDate":"2000-01-01","avatar":"https://example.com"}'
-```
-
----
-
-## 🗂 Project Structure
-
-```
-src/
-├── __tests__/
-│   └── serviceTests/
-│       ├── EmployeesService.test.ts
-│       ├── testCases/
-│       │   ├── employeesGet.test.ts
-│       │   ├── employeesAdd.test.ts
-│       │   ├── employeesUpdate.test.ts
-│       │   └── employeesDelete.test.ts
-│       ├── employeesData/
-│       │   └── employeesData.ts
-│       └── utils/
-│           └── setupTestEnv.ts
-├── service/
-│   ├── employee/
-│   │   ├── EmployeesService.ts
-│   │   ├── EmployeesServiceMap.ts
-│   │   └── EmployeesServiceMock.test.ts
-│   ├── accounting/
-│   └── registry.ts
-└── model/
-    └── errorTypes/
-```
+| Method   | Endpoint             | Description            |
+| -------- | -------------------- | ---------------------- |
+| `GET`    | `/api/employees`     | Retrieve all employees |
+| `GET`    | `/api/employees/:id` | Retrieve one employee  |
+| `POST`   | `/api/employees`     | Create a new employee  |
+| `PATCH`  | `/api/employees/:id` | Update employee data   |
+| `DELETE` | `/api/employees/:id` | Remove an employee     |
 
 ---
 
 ## ✅ Dependencies
 
-| Package           | Purpose                                         |
-| :---------------- | :---------------------------------------------- |
-| **node:test**     | Built-in test framework for unit tests          |
-| **assert/strict** | Assertion library for equality and error checks |
-| **lodash**        | Used for array comparison and utility functions |
-| **uuid**          | Generates unique employee IDs                   |
-| **TypeScript**    | Static typing and compiler support              |
-| **dotenv**        | Environment configuration                       |
-| **winston**       | Structured logging utility                      |
+-   `typescript` – Type safety and modern JS features
+-   `knex` – SQL query builder
+-   `sqlite3` – Embedded SQL database
+-   `uuid` – Employee ID generation
+-   `node:test` – Testing framework
+-   `dotenv` – Environment variable management
+
+---
+
+## 📊 Project Status
+
+✅ Completed
+💯 All tests passed (`npm run test-service sqlite`)
 
 ---
 
@@ -188,15 +186,10 @@ MIT License
 
 ## 🧮 Conclusion
 
-Homework #12 focuses on ensuring that the **EmployeesService** business logic is fully tested and reliable.
-By testing each method individually, the project achieves:
-
--   Consistent data handling across CRUD operations.
--   Predictable behavior for edge cases and errors.
--   Clean, maintainable unit tests that can serve as templates for future services.
-
-All tests ✅ passed — the service is solid and ready for integration with controllers and routes.
+This project demonstrates how to extend abstract classes to create real database services using **Knex** and **SQLite**.
+You’ve learned how to implement database CRUD logic in a modular, testable, and maintainable way.
+All tests passing confirms that your SQL service works correctly and integrates seamlessly with the rest of the backend system.
 
 ---
 
-Made with ❤️ and `TypeScript` by **Sam-Shepsl Malikin**
+Made with ❤️ and `TypeScript` by **Sam-Shepsl Malikin** 🎓
