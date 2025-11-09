@@ -1,8 +1,11 @@
 // src/__tests__/serviceTests/EmployeesService.test.ts
 
 import _ from "lodash";
-import test, { beforeEach } from "node:test";
-import { resetTestEmployees } from "./utils/setupTestEnv.ts";
+import test, { beforeEach, after } from "node:test";
+import {
+	resetTestEmployees,
+	saveTestEmployees,
+} from "./utils/setupTestEnv.ts";
 import { employeesGetTestCases } from "./testCases/employeesGet.test.ts";
 import { employeesAddTestCases } from "./testCases/employeesAdd.test.ts";
 import { employeesUpdateTestCases } from "./testCases/employeesUpdate.test.ts";
@@ -33,6 +36,7 @@ for (const [_, cases] of Object.entries(testCases)) {
  * ]);
  */
 function doTests(testCases: any[]): void {
+	after(saveTestEmployees);
 	beforeEach(resetTestEmployees);
 	for (let i = 0; i < testCases.length; i++) {
 		const prefix = "Test " + (i + 1) + ": ";
