@@ -19,4 +19,5 @@ export const createEmployeesTable = (table: Knex.CreateTableBuilder) => {
 	table.string("birthDate").notNullable();
 	table.integer("salary").notNullable();
 	table.string("department").notNullable();
+	table.index(["department"]);
 };
